@@ -95,7 +95,8 @@ void Thread::start() {
     delete data;
     std::terminate();
   } else {
-    assert(tid_ > 0);
+    // 线程不一定已经开始运行了
+    //assert(tid_ > 0);
   }
 }
 
@@ -105,7 +106,5 @@ int Thread::join() {
   joined_ = true;
   return pthread_join(pthreadId_, NULL);
 }
-
-
 
 } // namespace muduo
