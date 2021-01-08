@@ -1,7 +1,7 @@
 #!/bin/bash
-# author: youyunhong @ corp netease com
+# author: yyhclimacool@gmail.com
 # date: 2020-06-18
-# Func: 递归的替换头代码库中的所有文件
+# Func: 递归的替换代码库中的所有文件
 # Usage: bash replace.sh feature_engine "apis/proto/feature.pb.h" "apis/proto/cpp_proto/feature.pb.h"
 
 function convert
