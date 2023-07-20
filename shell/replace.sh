@@ -4,14 +4,12 @@
 # Func: 递归的替换代码库中的所有文件
 # Usage: bash replace.sh feature_engine "apis/proto/feature.pb.h" "apis/proto/cpp_proto/feature.pb.h"
 
-function convert
-{
+function convert {
   c1=$(sed 's/[&/\*[\.]/\\&/g' <<<"$1")
   cstr=$(sed 's/\]/\\]/g' <<<"$c1")
 }
 
-function replace
-{
+function replace {
   convert "$1"
   c0=$cstr
   convert "$2"
@@ -25,9 +23,8 @@ function do_replace() {
 }
 
 function main() {
-  for file in `ls $1`
-  do
-    if [ -d $1"/"$file ];then
+  for file in $(ls $1); do
+    if [ -d $1"/"$file ]; then
       main $1"/"$file "$2" "$3"
     else
       do_replace $1"/"$file "$2" "$3"
