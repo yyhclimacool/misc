@@ -71,5 +71,18 @@ run_apts() {
   apt-get install -yq pciutils
 }
 
+install_go() {
+  add-apt-repository ppa:longsleep/golang-backports -y
+  apt-get install -yq golang-go
+}
+
+install_conda() {
+  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&
+    bash Miniconda3-latest-Linux-x86_64.sh -bfu -p /usr/local/miniconda3 &&
+    rm -rf Miniconda3-latest-Linux-x86_64.sh
+}
+
 config_apt
 run_apts
+install_go
+install_conda
