@@ -20,8 +20,8 @@ replace() {
 }
 
 config_apt() {
-  cp /etc/apt/sources.list /etc/apt/sources.list.bak.${current_time}
-  replace "http://archive.ubuntu.com/ubuntu/" "http://mirrors.aliyun.com/ubuntu/" /etc/apt/sources.list
+  # cp /etc/apt/sources.list /etc/apt/sources.list.bak.${current_time}
+  # replace "http://archive.ubuntu.com/ubuntu/" "http://mirrors.aliyun.com/ubuntu/" /etc/apt/sources.list
   apt-get update -yq
   apt-get install -yq software-properties-common apt-utils && apt-get upgrade -yq
 }

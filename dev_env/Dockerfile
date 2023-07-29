@@ -22,9 +22,9 @@ RUN ln -s /usr/local/bin/gfortran /usr/bin/gfortran
 
 RUN ./init_ubuntu.sh
 
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN brew install zsh
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# RUN brew install zsh
+# RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 RUN unset TF_NEED_CUDA
 
@@ -56,7 +56,7 @@ RUN unset TF_NEED_CUDA
 #RUN wget -nH -m --cut-dirs=2 --ftp-user=chuanmei --ftp-password=chuanmei163Fn4/Q ftp://sa-dianxin-ftp.hz.163.org/youyunhong/libcudnn7-dev_7.6.2.24-1+cuda10.0_amd64.deb && \
 #    dpkg -i libcudnn7-dev_7.6.2.24-1+cuda10.0_amd64.deb && rm libcudnn7-dev_7.6.2.24-1+cuda10.0_amd64.deb
 
-RUN echo 'export PATH=/usr/local/miniconda3/bin:/usr/local/cuda-11.8/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64:/lib:/lib64:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+RUN echo 'export PATH=/usr/local/miniconda3/bin:/usr/local/cuda/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/lib:/lib64:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
 
 RUN git config --global credential.helper store && \
     git config --global user.email "yyhclimacool@gmail.com" && \
