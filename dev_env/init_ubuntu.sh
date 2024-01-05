@@ -84,9 +84,9 @@ install_conda() {
 }
 
 install_cuda() {
-  wget https://cn.download.nvidia.com/XFree86/Linux-x86_64/535.86.05/NVIDIA-Linux-x86_64-535.86.05.run &&
-    bash NVIDIA-Linux-x86_64-535.86.05.run &&
-    rm -rf NVIDIA-Linux-x86_64-535.86.05.run &&
+  wget https://us.download.nvidia.cn/XFree86/Linux-x86_64/535.113.01/NVIDIA-Linux-x86_64-535.113.01.run &&
+    bash NVIDIA-Linux-x86_64-535.113.01.run &&
+    rm -rf NVIDIA-Linux-x86_64-535.113.01.run &&
     wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run &&
     bash cuda_11.8.0_520.61.05_linux.run --silent --toolkit --run-nvidia-xconfig &&
     rm -rf cuda_11.8.0_520.61.05_linux.run &&
@@ -106,5 +106,5 @@ config_apt
 run_apts
 install_go
 install_conda
-install_cuda
-install_torch
+#install_cuda
+#install_torch
