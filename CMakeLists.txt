@@ -1,11 +1,25 @@
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 project(misc VERSION 0.1.1 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(use_glog use_glog.cc)
-target_link_libraries(use_glog libglog.a)
-install(TARGETS use_glog DESTINATION bin COMPONENT binaries)
+set(COMMON_LIBRARIES
+    glog
+    gflags
+    gtest
+    pthread
+)
+
+# add_executable(use_glog src/use_glog.cc)
+# target_link_libraries(use_glog libglog.a)
+# install(TARGETS use_glog DESTINATION bin COMPONENT binaries)
+
+add_library(aero STATIC src/aero/plugin.cc)
+install(TARGETS aero DESTINATION lib COMPONENT libraries)
+
+add_executable(plugin_ut src/aero/plugin_ut.cc)
+target_link_libraries(plugin_ut aero ${COMMON_LIBRARIES})
+install(TARGETS plugin_ut DESTINATION bin COMPONENT binaries)

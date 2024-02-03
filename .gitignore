@@ -33,3 +33,5 @@
 
 # build directory
 build/
+cmake_build/
+output/
