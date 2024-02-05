@@ -13,11 +13,16 @@ set(COMMON_LIBRARIES
     pthread
 )
 
+set(AERO_SRCS
+    src/aero/plugin.cc
+    src/aero/dynamic_loader.cc
+)
+
 # add_executable(use_glog src/use_glog.cc)
 # target_link_libraries(use_glog libglog.a)
 # install(TARGETS use_glog DESTINATION bin COMPONENT binaries)
 
-add_library(aero STATIC src/aero/plugin.cc)
+add_library(aero STATIC ${AERO_SRCS})
 install(TARGETS aero DESTINATION lib COMPONENT libraries)
 
 add_executable(plugin_ut src/aero/plugin_ut.cc)

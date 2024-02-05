@@ -14,10 +14,7 @@ public:
 
 class PluginRegistry {
 public:
-  static PluginRegistry &instance() noexcept {
-    static PluginRegistry instance;
-    return instance;
-  }
+  static PluginRegistry &instance() noexcept;
   int regist(std::string_view name, Plugin *plugin) noexcept;
   int regist(std::string_view name, std::unique_ptr<Plugin> &&plugin) noexcept;
   Plugin *get(std::string_view name) const noexcept;
