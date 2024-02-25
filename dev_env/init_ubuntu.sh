@@ -46,7 +46,7 @@ run_apts() {
   apt-get install -yq libboost-all-dev
   apt-get install -yq libc-ares-dev
   apt-get install -yq libevent-dev
-  apt-get install -yq libgoogle-glog-dev
+  apt-get install -yq libgoogle-glog-dev libgtest-dev
   apt-get install -yq libgoogle-perftools-dev
   apt-get install -yq libleveldb-dev
   apt-get install -yq libprotobuf-dev
@@ -56,6 +56,7 @@ run_apts() {
   apt-get install -yq libtool
   apt-get install -yq libunwind8-dev
   apt-get install -yq make
+  apt-get install -yq net-tools
   apt-get install -yq pkg-config
   apt-get install -yq protobuf-compiler
   apt-get install -yq python-numpy
@@ -102,9 +103,9 @@ install_torch() {
   conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 }
 
-config_apt
-run_apts
-install_go
-install_conda
+#config_apt
+#run_apts
+#install_go
+#install_conda
 #install_cuda
-#install_torch
+install_torch

@@ -18,6 +18,8 @@ set(AERO_SRCS
     src/aero/dynamic_loader.cc
 )
 
+find_package(benchmark REQUIRED)
+
 # add_executable(use_glog src/use_glog.cc)
 # target_link_libraries(use_glog libglog.a)
 # install(TARGETS use_glog DESTINATION bin COMPONENT binaries)
@@ -28,3 +30,7 @@ install(TARGETS aero DESTINATION lib COMPONENT libraries)
 add_executable(plugin_ut src/aero/plugin_ut.cc)
 target_link_libraries(plugin_ut aero ${COMMON_LIBRARIES})
 install(TARGETS plugin_ut DESTINATION bin COMPONENT binaries)
+
+add_executable(avx_benchmark src/simd/avx_benchmark.cc)
+target_link_libraries(avx_benchmark benchmark::benchmark)
+install(TARGETS avx_benchmark DESTINATION bin COMPONENT binaries)
