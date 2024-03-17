@@ -35,5 +35,8 @@ install(TARGETS plugin_ut DESTINATION bin COMPONENT binaries)
 
 add_executable(avx_benchmark src/simd/avx_benchmark.cc)
 
+add_executable(item47 src/effective_cpp/item47_use_traits_classes_for_infomation_about_types.cc)
+install(TARGETS item47 DESTINATION bin COMPONENT binaries)
+
 target_link_libraries(avx_benchmark benchmark::benchmark)
 install(TARGETS avx_benchmark DESTINATION bin COMPONENT binaries)
