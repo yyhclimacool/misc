@@ -1,13 +1,15 @@
 # Build development environment
 
-FROM ubuntu:22.04
-#FROM arm64v8/ubuntu:latest
+# FROM ubuntu:22.04
+# FROM arm64v8/ubuntu:latest
+# FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 LABEL maintainer="yyhclimacool@gmail.com"
 LABEL version="0.1"
 LABEL description="Personal development environment"
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV IMAGE_BUILT_AT 20230503
+ENV IMAGE_BUILT_AT 20240401
 ENV TMP=/tmp
 ENV LD_LIBRARY_PATH /lib:/lib64:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64
 

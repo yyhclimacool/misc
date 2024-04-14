@@ -152,9 +152,9 @@ install_docker() {
   # install nvidia-toolkit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 }
 
-#config_apt
-#run_apts
-#install_go
-#install_conda
- install_cuda
+config_apt
+run_apts
+install_go
+install_conda
+#  install_cuda
  install_torch
