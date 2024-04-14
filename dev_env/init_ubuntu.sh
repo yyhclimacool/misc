@@ -156,5 +156,5 @@ install_docker() {
 #run_apts
 #install_go
 #install_conda
-#install_cuda
-install_torch
+ install_cuda
+ install_torch
