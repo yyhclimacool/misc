@@ -22,7 +22,7 @@ ADD init_ubuntu.sh .
 RUN ln -s /usr/local/bin/gfortran /usr/bin/gfortran
 # RUN hwclock --hctosys 
 
-RUN ./init_ubuntu.sh
+# RUN ./init_ubuntu.sh
 
 # RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 # RUN brew install zsh
@@ -60,20 +60,20 @@ RUN unset TF_NEED_CUDA
 
 RUN echo 'export PATH=/usr/local/miniconda3/bin:/usr/local/cuda/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/lib:/lib64:/usr/lib:/usr/lib64:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
 
-RUN git config --global credential.helper store && \
-    git config --global user.email "yyhclimacool@gmail.com" && \
-    git config --global user.name "yyhclimacool"
+# RUN git config --global credential.helper store && \
+#    git config --global user.email "yyhclimacool@gmail.com" && \
+#    git config --global user.name "yyhclimacool"
 
-RUN useradd -rm -d /home/kevin -s /bin/bash -g root -G sudo -u 1000 kevin \
-    && echo "kevin:kevin" | chpasswd \
-    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
-    && service ssh start
+# RUN useradd -rm -d /home/kevin -s /bin/bash -g root -G sudo -u 1000 kevin \
+#     && echo "kevin:kevin" | chpasswd \
+#     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+#     && service ssh start
 
 # RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 #     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-D"]
+# CMD ["/usr/sbin/sshd", "-D"]
 #CMD echo "[CMD]Welcome to my dev docker!"
 #ENTRYPOINT echo "[ENTRYPOINT]Welcome to my dev docker!"

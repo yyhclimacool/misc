@@ -85,6 +85,8 @@ install_conda() {
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh &&
     bash Miniconda3-latest-Linux-x86_64.sh -bfu &&
     rm -rf Miniconda3-latest-Linux-x86_64.sh
+
+  ~/miniconda3/bin/conda init
 }
 
 install_nvidia_driver() {
@@ -128,8 +130,8 @@ install_cudnn() {
 
 install_torch() {
   # pip install torch==1.10.0+cu111 torchvision==0.11.0+cu111 torchaudio==0.10.0 -f https://download.pytorch.org/whl/torch_stable.html
-  conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
-  # conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+  conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+  # conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia -y
 }
 
 install_docker() {
@@ -157,4 +159,4 @@ run_apts
 install_go
 install_conda
 #  install_cuda
- install_torch
+install_torch
