@@ -28,6 +28,7 @@ config_apt() {
 
 run_apts() {
   apt-get install -yq automake
+  apt-get install -yq libbenchmark-dev
   apt-get install -yq bison
   apt-get install -yq clang-11
   apt-get install -yq ctags
@@ -41,13 +42,15 @@ run_apts() {
   apt-get install -yq gdb
   apt-get install -yq git
   apt-get install -yq google-perftools
+  apt-get install -yq libgmock-dev
+  apt-get install -yq libgtest-dev
   apt-get install -yq graphviz
   apt-get install -yq libapr1-dev
   apt-get install -yq libaprutil1-dev
   apt-get install -yq libboost-all-dev
   apt-get install -yq libc-ares-dev
   apt-get install -yq libevent-dev
-  apt-get install -yq libgoogle-glog-dev libgtest-dev
+  apt-get install -yq libgoogle-glog-dev
   apt-get install -yq libgoogle-perftools-dev
   apt-get install -yq libleveldb-dev
   apt-get install -yq libprotobuf-dev
