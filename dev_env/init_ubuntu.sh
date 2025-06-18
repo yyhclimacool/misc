@@ -91,9 +91,9 @@ install_conda() {
 install_nvidia_driver() {
   # ref: https://ubuntu.com/server/docs/nvidia-drivers-installation
   # manual install
-  wget https://us.download.nvidia.cn/XFree86/Linux-x86_64/535.113.01/NVIDIA-Linux-x86_64-535.113.01.run &&
-    bash NVIDIA-Linux-x86_64-535.113.01.run &&
-    rm -rf NVIDIA-Linux-x86_64-535.113.01.run
+  wget https://cn.download.nvidia.cn/XFree86/Linux-x86_64/570.169/NVIDIA-Linux-x86_64-570.169.run &&
+    bash NVIDIA-Linux-x86_64-570.169.run &&
+    rm -rf NVIDIA-Linux-x86_64-570.169.run
 
   # apt install
   # sudo ubuntu-drivers install --gpgpu
