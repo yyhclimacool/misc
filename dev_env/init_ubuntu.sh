@@ -30,15 +30,13 @@ run_apts() {
   apt-get install -yq automake
   apt-get install -yq libbenchmark-dev
   apt-get install -yq bison
-  apt-get install -yq clang-11
-  apt-get install -yq ctags
-  apt-get install -yq globalss
+  apt-get install -yq clang
   apt-get install -yq curl
   apt-get install -yq default-jdk
   apt-get install -yq default-jre
   apt-get install -yq docker.io
   apt-get install -yq flex
-  apt-get install -yq gcc-10
+  apt-get install -yq gcc
   apt-get install -yq gdb
   apt-get install -yq git
   apt-get install -yq google-perftools
@@ -61,10 +59,8 @@ run_apts() {
   apt-get install -yq libunwind8-dev
   apt-get install -yq make
   apt-get install -yq net-tools
-  # apt-get install -yq nvidia-cuda-toolkit
   apt-get install -yq pkg-config
   apt-get install -yq protobuf-compiler
-  apt-get install -yq python-numpy
   apt-get install -yq ripgrep
   apt-get install -yq rustc
   apt-get install -yq samba samba-common-bin
