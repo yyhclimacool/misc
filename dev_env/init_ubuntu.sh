@@ -104,11 +104,15 @@ install_cuda() {
   # wget https://developer.download.nvidia.com/compute/cuda/12.3.2/local_installers/cuda_12.3.2_545.23.08_linux.run &&
   #   sudo sh cuda_12.3.2_545.23.08_linux.run --silent --toolkit --run-nvidia-xconfig
 
-  wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run &&
-    bash cuda_11.8.0_520.61.05_linux.run --silent --toolkit --run-nvidia-xconfig &&
-    rm -rf cuda_11.8.0_520.61.05_linux.run
+  #wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run &&
+  #  bash cuda_11.8.0_520.61.05_linux.run --silent --toolkit --run-nvidia-xconfig &&
+  #  rm -rf cuda_11.8.0_520.61.05_linux.run
 
-  echo "export CUDA_HOME=/usr/local/cuda-11.8" >>~/.bashrc
+  wget https://developer.download.nvidia.com/compute/cuda/12.9.1/local_installers/cuda_12.9.1_575.57.08_linux.run && 
+    base cuda_12.9.1_575.57.08_linux.run --silent --toolkit --run-nvidia-xconfig &&
+    rm -rf cuda_12.9.1_575.57.08_linux.run
+
+  echo "export CUDA_HOME=/usr/local/cuda-12.9" >>~/.bashrc
   echo "export PATH=${CUDA_HOME}/bin:$PATH" >>~/.bashrc
   echo "export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:$LD_LIBRARY_PATH" >>~/.bashrc
 
