@@ -109,7 +109,7 @@ install_cuda() {
   #  rm -rf cuda_11.8.0_520.61.05_linux.run
 
   wget https://developer.download.nvidia.com/compute/cuda/12.9.1/local_installers/cuda_12.9.1_575.57.08_linux.run && 
-    base cuda_12.9.1_575.57.08_linux.run --silent --toolkit --run-nvidia-xconfig &&
+    bash cuda_12.9.1_575.57.08_linux.run --silent --toolkit --run-nvidia-xconfig &&
     rm -rf cuda_12.9.1_575.57.08_linux.run
 
   echo "export CUDA_HOME=/usr/local/cuda-12.9" >>~/.bashrc
