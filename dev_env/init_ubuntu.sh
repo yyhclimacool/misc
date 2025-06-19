@@ -121,14 +121,12 @@ install_cuda() {
 
 install_cudnn() {
   # ref: https://developer.nvidia.com/cudnn-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=deb_local
-  wget https://developer.download.nvidia.com/compute/cudnn/9.0.0/local_installers/cudnn-local-repo-ubuntu2204-9.0.0_1.0-1_amd64.deb
-  sudo dpkg -i cudnn-local-repo-ubuntu2204-9.0.0_1.0-1_amd64.deb
-  sudo cp /var/cudnn-local-repo-ubuntu2204-9.0.0/cudnn-*-keyring.gpg /usr/share/keyrings/
-  sudo apt-get update
-  # sudo apt-get -y install cudnn
 
-  sudo apt-get -y install cudnn-cuda-11
-  # sudo apt-get -y install cudnn-cuda-12
+  wget https://developer.download.nvidia.com/compute/cudnn/9.10.2/local_installers/cudnn-local-repo-debian12-9.10.2_1.0-1_amd64.deb
+  sudo dpkg -i cudnn-local-repo-debian12-9.10.2_1.0-1_amd64.deb
+  sudo cp /var/cudnn-local-repo-debian12-9.10.2/cudnn-*-keyring.gpg /usr/share/keyrings/
+  sudo apt-get update
+  sudo apt-get -y install cudnn
 }
 
 install_torch() {
