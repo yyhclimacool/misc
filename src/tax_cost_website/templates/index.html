@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人所得税与公司用人成本计算器</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- 左侧输入区域 -->
+            <div class="col-lg-4 col-md-5 bg-light p-4">
+                <div class="sticky-top">
+                    <h2 class="mb-4 text-center">
+                        <i class="fas fa-calculator text-primary"></i>
+                        税务计算器
+                    </h2>
+                    
+                    <form id="taxForm">
+                        <div class="mb-3">
+                            <label for="monthly_salary" class="form-label">
+                                <i class="fas fa-money-bill-wave text-success"></i>
+                                月薪（元）
+                            </label>
+                            <input type="number" class="form-control" id="monthly_salary" value="30000" min="0" step="100">
+                            <div class="form-text">您的月薪金额</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="annual_months" class="form-label">
+                                <i class="fas fa-calendar-alt text-info"></i>
+                                年薪月数
+                            </label>
+                            <input type="number" class="form-control" id="annual_months" value="13" min="12" max="24">
+                            <div class="form-text">包含年终奖的总月数（如13薪、15薪等）</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="social_insurance_base" class="form-label">
+                                <i class="fas fa-shield-alt text-warning"></i>
+                                社保缴费基数（元）
+                            </label>
+                            <input type="number" class="form-control" id="social_insurance_base" value="4812" min="0" step="1">
+                            <div class="form-text">公司为您缴纳社保的基数</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="housing_fund_base" class="form-label">
+                                <i class="fas fa-home text-danger"></i>
+                                公积金缴费基数（元）
+                            </label>
+                            <input type="number" class="form-control" id="housing_fund_base" value="30000" min="0" step="100">
+                            <div class="form-text">公司为您缴纳公积金的基数</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="special_deduction" class="form-label">
+                                <i class="fas fa-receipt text-secondary"></i>
+                                专项附加扣除（元）
+                            </label>
+                            <input type="number" class="form-control" id="special_deduction" value="0" min="0" step="100">
+                            <div class="form-text">子女教育、继续教育、大病医疗、住房贷款利息、住房租金、赡养老人等扣除</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-calculator"></i>
+                            立即计算
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 p-3 bg-white rounded border">
+                        <h6 class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            说明
+                        </h6>
+                        <small class="text-muted">
+                            本计算器基于杭州地区社保政策计算，仅供参考。实际税费可能因地区政策差异而有所不同。
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧结果展示区域 -->
+            <div class="col-lg-8 col-md-7 p-4">
+                <div id="loading" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">计算中...</span>
+                    </div>
+                    <p class="mt-2">正在计算...</p>
+                </div>
+                
+                <div id="results" class="d-none">
+                    <h2 class="mb-4">
+                        <i class="fas fa-chart-line text-primary"></i>
+                        计算结果
+                    </h2>
+                    
+                    <!-- 核心结果卡片 -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-wallet"></i>
+                                        税后年收入
+                                    </h5>
+                                    <h3 id="after_tax_income" class="card-text"></h3>
+                                    <small id="monthly_after_tax" class="text-white-50"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-white bg-danger">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-building"></i>
+                                        公司用人成本
+                                    </h5>
+                                    <h3 id="annual_company_cost" class="card-text"></h3>
+                                    <small id="monthly_company_cost" class="text-white-50"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 详细信息标签页 -->
+                    <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">
+                                <i class="fas fa-user"></i>
+                                个人收益明细
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab">
+                                <i class="fas fa-building"></i>
+                                公司成本明细
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tax-tab" data-bs-toggle="tab" data-bs-target="#tax" type="button" role="tab">
+                                <i class="fas fa-receipt"></i>
+                                税务计算明细
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="resultTabsContent">
+                        <!-- 个人收益明细 -->
+                        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                            <div class="p-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">收入构成</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td>税前年收入</td>
+                                                <td class="text-end" id="annual_income"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>基本减除费用</td>
+                                                <td class="text-end" id="basic_deduction"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>专项附加扣除</td>
+                                                <td class="text-end" id="special_deduction_display"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>个人社保公积金</td>
+                                                <td class="text-end" id="personal_annual_total"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>个人所得税</td>
+                                                <td class="text-end" id="annual_tax"></td>
+                                            </tr>
+                                            <tr class="table-success">
+                                                <td><strong>税后现金收入</strong></td>
+                                                <td class="text-end"><strong id="after_tax_display"></strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">社保公积金明细（个人缴纳）</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td>养老保险</td>
+                                                <td class="text-end" id="personal_pension"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>医疗保险</td>
+                                                <td class="text-end" id="personal_medical"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>失业保险</td>
+                                                <td class="text-end" id="personal_unemployment"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>住房公积金</td>
+                                                <td class="text-end" id="personal_housing_fund"></td>
+                                            </tr>
+                                            <tr class="table-info">
+                                                <td><strong>总计</strong></td>
+                                                <td class="text-end"><strong id="personal_total_display"></strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-3">
+                                    <h6><i class="fas fa-piggy-bank"></i> 总收益分析</h6>
+                                    <p class="mb-2">税后现金收入: <span id="cash_benefit" class="fw-bold"></span></p>
+                                    <p class="mb-2">公积金账户增加: <span id="housing_fund_benefit" class="fw-bold"></span></p>
+                                    <p class="mb-0">实际总收益: <span id="total_benefit" class="fw-bold text-success"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 公司成本明细 -->
+                        <div class="tab-pane fade" id="company" role="tabpanel">
+                            <div class="p-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">成本构成</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td>员工薪资</td>
+                                                <td class="text-end" id="company_salary"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>社保缴费</td>
+                                                <td class="text-end" id="company_social_insurance"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>公积金缴费</td>
+                                                <td class="text-end" id="company_housing_fund"></td>
+                                            </tr>
+                                            <tr class="table-warning">
+                                                <td><strong>总用人成本</strong></td>
+                                                <td class="text-end"><strong id="company_total_cost"></strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary">社保公积金明细（公司缴纳）</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td>养老保险</td>
+                                                <td class="text-end" id="company_pension"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>医疗保险</td>
+                                                <td class="text-end" id="company_medical"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>失业保险</td>
+                                                <td class="text-end" id="company_unemployment"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>工伤保险</td>
+                                                <td class="text-end" id="company_injury"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>住房公积金</td>
+                                                <td class="text-end" id="company_housing_fund_detail"></td>
+                                            </tr>
+                                            <tr class="table-info">
+                                                <td><strong>总计</strong></td>
+                                                <td class="text-end"><strong id="company_total_insurance"></strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 税务计算明细 -->
+                        <div class="tab-pane fade" id="tax" role="tabpanel">
+                            <div class="p-4">
+                                <h6 class="text-primary">税务计算过程</h6>
+                                <table class="table">
+                                    <tr>
+                                        <td>应纳税所得额</td>
+                                        <td class="text-end" id="taxable_income"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>适用税率</td>
+                                        <td class="text-end" id="tax_rate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>速算扣除数</td>
+                                        <td class="text-end" id="quick_deduction"></td>
+                                    </tr>
+                                    <tr class="table-danger">
+                                        <td><strong>应纳税额</strong></td>
+                                        <td class="text-end"><strong id="tax_amount"></strong></td>
+                                    </tr>
+                                </table>
+                                
+                                <div class="alert alert-light">
+                                    <h6>计算公式:</h6>
+                                    <p class="mb-2">应纳税所得额 = 年收入 - 基本减除费用(6万) - 专项扣除 - 专项附加扣除</p>
+                                    <p class="mb-0">应纳税额 = 应纳税所得额 × 适用税率 - 速算扣除数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="error" class="alert alert-danger d-none">
+                    <h6><i class="fas fa-exclamation-triangle"></i> 计算错误</h6>
+                    <p id="error-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
