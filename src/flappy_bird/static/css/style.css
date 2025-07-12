@@ -82,6 +82,27 @@ body {
     100% { text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 20px rgba(255, 255, 255, 0.8); }
 }
 
+/* 速度指示器 */
+.speed-indicator {
+    font-size: 16px;
+    color: #FFD700;
+    margin-top: 10px;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.speed-indicator i {
+    animation: speedPulse 1s ease-in-out infinite;
+}
+
+@keyframes speedPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 /* 游戏界面 */
 .game-screen {
     position: absolute;

@@ -30,6 +30,11 @@ function initGame() {
     // 创建游戏实例
     game = new FlappyBirdGame(canvas);
     
+    // 尝试预激活音频上下文（需要用户交互后才能完全激活）
+    if (game.soundManager) {
+        game.soundManager.ensureAudioContext().catch(console.warn);
+    }
+    
     // 初始化显示
     updateBestScore();
     
@@ -42,8 +47,11 @@ function initGame() {
 
 function bindUIEvents() {
     // 开始游戏按钮
-    document.getElementById('startBtn').addEventListener('click', function() {
-        game.startGame();
+    document.getElementById('startBtn').addEventListener('click', async function() {
+        if (game && game.soundManager) {
+            await game.soundManager.activateAudio();
+        }
+        await game.startGame();
     });
     
     // 排行榜按钮
@@ -77,7 +85,10 @@ function bindUIEvents() {
     });
     
     // 音效开关按钮
-    document.getElementById('soundBtn').addEventListener('click', function() {
+    document.getElementById('soundBtn').addEventListener('click', async function() {
+        if (game && game.soundManager) {
+            await game.soundManager.activateAudio();
+        }
         toggleSound();
     });
     
@@ -239,7 +250,13 @@ async function saveScore() {
 }
 
 function toggleSound() {
-    soundEnabled = !soundEnabled;
+    // 切换游戏音效状态
+    if (game && game.soundManager) {
+        soundEnabled = game.soundManager.toggle();
+    } else {
+        soundEnabled = !soundEnabled;
+    }
+    
     const soundBtn = document.getElementById('soundBtn');
     const icon = soundBtn.querySelector('i');
     
@@ -300,7 +317,20 @@ function initModals() {
     const savedSoundEnabled = localStorage.getItem('flappyBirdSoundEnabled');
     if (savedSoundEnabled !== null) {
         soundEnabled = savedSoundEnabled === 'true';
-        toggleSound();
+        // 设置游戏音效状态
+        if (game && game.soundManager) {
+            game.soundManager.enabled = soundEnabled;
+        }
+        // 更新UI
+        const soundBtn = document.getElementById('soundBtn');
+        const icon = soundBtn.querySelector('i');
+        if (soundEnabled) {
+            icon.className = 'fas fa-volume-up';
+            soundBtn.title = '音效开启';
+        } else {
+            icon.className = 'fas fa-volume-mute';
+            soundBtn.title = '音效关闭';
+        }
     }
     
     // 保存分数表单提交
@@ -308,6 +338,21 @@ function initModals() {
         e.preventDefault();
         saveScore();
     });
+    
+    // 添加一次性用户交互监听器来激活音频
+    const activateAudioOnFirstInteraction = async () => {
+        if (game && game.soundManager) {
+            await game.soundManager.activateAudio();
+        }
+        // 移除监听器
+        document.removeEventListener('click', activateAudioOnFirstInteraction);
+        document.removeEventListener('keydown', activateAudioOnFirstInteraction);
+        document.removeEventListener('touchstart', activateAudioOnFirstInteraction);
+    };
+    
+    document.addEventListener('click', activateAudioOnFirstInteraction);
+    document.addEventListener('keydown', activateAudioOnFirstInteraction);
+    document.addEventListener('touchstart', activateAudioOnFirstInteraction);
 }
 
 function handleFullscreenChange() {
@@ -353,8 +398,13 @@ window.addEventListener('beforeunload', function(e) {
 
 // 处理页面可见性变化
 document.addEventListener('visibilitychange', function() {
-    if (game && game.gameState === 'playing' && document.hidden) {
-        game.pauseGame();
+    if (game) {
+        if (game.gameState === 'playing' && document.hidden) {
+            game.pauseGame();
+        } else if (!document.hidden && game.soundManager) {
+            // 页面重新可见时，尝试恢复音频上下文
+            game.soundManager.ensureAudioContext();
+        }
     }
 });
 

@@ -19,6 +19,10 @@
                 <!-- 分数显示 -->
                 <div class="score-display hidden" id="scoreDisplay">
                     <div class="score-number">0</div>
+                    <div class="speed-indicator">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span id="speedValue">1.0</span>x
+                    </div>
                 </div>
                 
                 <!-- 开始界面 -->
@@ -32,6 +36,8 @@
                         <div class="instructions">
                             <p><i class="fas fa-mouse-pointer"></i> 点击屏幕或按空格键让小鸟飞行</p>
                             <p><i class="fas fa-trophy"></i> 穿过管道获得分数</p>
+                            <p><i class="fas fa-coins"></i> 收集金币获得5分奖励</p>
+                            <p><i class="fas fa-tachometer-alt"></i> 游戏速度缓慢递增，最高3倍速度</p>
                         </div>
                         <button class="btn btn-primary btn-lg start-btn" id="startBtn">
                             <i class="fas fa-play"></i>
@@ -150,6 +156,10 @@
                         <li>观察管道间距，提前判断</li>
                         <li>练习控制小鸟的飞行高度</li>
                         <li>专注于下一个管道口</li>
+                        <li>游戏速度随分数缓慢递增</li>
+                        <li>注意右上角的速度指示器</li>
+                        <li>收集金币可获得5分奖励</li>
+                        <li>速度最高增加到3倍</li>
                     </ul>
                 </div>
             </div>
