@@ -76,7 +76,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Calendar, Timeline, Search, Plus, BarChart, Moon, Menu, House } from '@element-plus/icons-vue'
+import { Calendar, Timeline, Search, Plus, TrendCharts, Moon, Menu, House } from '@element-plus/icons-vue'
 
 const showMobileMenu = ref(false)
 
@@ -84,7 +84,7 @@ const menuItems = [
   { path: '/', title: '首页', icon: House },
   { path: '/timeline', title: '时间线', icon: Timeline },
   { path: '/search', title: '搜索', icon: Search },
-  { path: '/stats', title: '统计', icon: BarChart }
+  { path: '/statistics', title: '统计', icon: TrendCharts }
 ]
 
 const toggleTheme = () => {

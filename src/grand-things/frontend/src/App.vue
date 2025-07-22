@@ -11,6 +11,9 @@
 <script setup>
 import NavHeader from './components/NavHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+
+// 应用已加载完成
+console.log('Grand Things应用已完全加载！')
 </script>
 
 <style lang="scss">

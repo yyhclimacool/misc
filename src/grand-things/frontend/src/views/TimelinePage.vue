@@ -212,7 +212,7 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { 
   Timeline, Operation, Menu, Refresh, Close, Document,
   TrendCharts, Coin, Cpu, Rocket, Monitor, 
-  MagicStick, House, Car, VideoCamera, Football
+  MagicStick, House, Truck, VideoCamera, Football
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
 import dayjs from 'dayjs'
@@ -355,7 +355,7 @@ function getCategoryIcon(category) {
     '医疗': MagicStick,
     '教育': House,
     '房产': House,
-    '汽车': Car,
+    '汽车': Truck,
     '娱乐': VideoCamera,
     '体育': Football
   }

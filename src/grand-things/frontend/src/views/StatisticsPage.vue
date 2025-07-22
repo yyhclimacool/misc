@@ -3,7 +3,7 @@
     <!-- 页面头部 -->
     <div class="page-header fade-in-up">
       <h1 class="page-title">
-        <el-icon><BarChart /></el-icon>
+        <el-icon><TrendCharts /></el-icon>
         数据统计
       </h1>
       <p class="page-subtitle">深入了解您的事件数据分布和趋势</p>
@@ -179,7 +179,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { 
-  BarChart, TrendCharts, Refresh, 
+  TrendCharts, Refresh, 
   Document, CaretTop, CaretBottom
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
@@ -197,7 +197,7 @@ const totalEvents = ref(0)
 // 概览统计
 const overviewStats = ref([
   { key: 'total', label: '总事件数', value: 0, icon: Document, color: '#667eea', growth: 12 },
-  { key: 'categories', label: '事件分类', value: 0, icon: BarChart, color: '#764ba2' },
+  { key: 'categories', label: '事件分类', value: 0, icon: TrendCharts, color: '#764ba2' },
   { key: 'thisMonth', label: '本月新增', value: 0, icon: TrendCharts, color: '#f093fb', growth: 25 }
 ])
 

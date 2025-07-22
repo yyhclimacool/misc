@@ -134,10 +134,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { 
-  Plus, Timeline, ArrowRight, Document, 
-  Magic, Search, BarChart, Trophy, 
-  Calendar, Notification
+import {
+  Plus, Timeline, ArrowRight, Document,
+  MagicStick, Search, TrendCharts, Trophy,
+  Calendar, Bell
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
 import dayjs from 'dayjs'
@@ -147,8 +147,8 @@ const loading = ref(false)
 const recentEvents = ref([])
 const stats = ref([
   { key: 'total', label: '总事件数', value: 0, icon: Calendar },
-  { key: 'categories', label: '事件分类', value: 0, icon: BarChart },
-  { key: 'thisMonth', label: '本月新增', value: 0, icon: Notification },
+  { key: 'categories', label: '事件分类', value: 0, icon: TrendCharts },
+      { key: 'thisMonth', label: '本月新增', value: 0, icon: Bell },
   { key: 'highImpact', label: '重要事件', value: 0, icon: Trophy }
 ])
 
@@ -156,7 +156,7 @@ const features = [
   {
     title: '智能标签提取',
     description: '自动分析事件内容，提取相关标签和分类',
-    icon: Magic
+    icon: MagicStick
   },
   {
     title: '时间线展示',
@@ -171,7 +171,7 @@ const features = [
   {
     title: '数据统计',
     description: '丰富的图表统计，深入了解事件分布情况',
-    icon: BarChart
+    icon: TrendCharts
   }
 ]
 
