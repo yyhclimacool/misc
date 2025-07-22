@@ -44,7 +44,7 @@
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2024 Grand Things. 让每一个重要时刻都被记录.</p>
+        <p>&copy; 2025 Grand Things. 让每一个重要时刻都被记录.</p>
       </div>
     </div>
   </footer>

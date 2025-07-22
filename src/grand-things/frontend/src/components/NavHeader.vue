@@ -36,9 +36,34 @@
           <el-icon><Plus /></el-icon>
           添加事件
         </el-button>
-        <el-button circle size="default" @click="toggleTheme">
-          <el-icon><Moon /></el-icon>
-        </el-button>
+        
+        <!-- 主题切换 -->
+        <el-dropdown @command="setTheme" class="theme-dropdown">
+          <el-button circle size="default" class="theme-toggle">
+            <el-icon>
+              <component :is="currentThemeIcon" />
+            </el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item 
+                v-for="theme in themeOptions" 
+                :key="theme.value"
+                :command="theme.value"
+                :disabled="currentTheme === theme.value"
+                class="theme-option"
+              >
+                <el-icon class="theme-icon">
+                  <component :is="getThemeIcon(theme.icon)" />
+                </el-icon>
+                <span>{{ theme.label }}</span>
+                <el-icon v-if="currentTheme === theme.value" class="check-icon">
+                  <Check />
+                </el-icon>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
 
       <!-- 移动端菜单按钮 -->
@@ -57,6 +82,7 @@
       size="280px"
     >
       <div class="mobile-menu">
+        <!-- 导航项 -->
         <router-link 
           v-for="item in menuItems" 
           :key="item.path"
@@ -69,27 +95,90 @@
           </el-icon>
           <span>{{ item.title }}</span>
         </router-link>
+        
+        <!-- 分隔线 -->
+        <div class="mobile-menu-divider"></div>
+        
+        <!-- 主题切换 -->
+        <div class="mobile-theme-section">
+          <div class="mobile-section-title">主题设置</div>
+          <div 
+            v-for="theme in themeOptions" 
+            :key="theme.value"
+            class="mobile-theme-item"
+            :class="{ active: currentTheme === theme.value }"
+            @click="setTheme(theme.value)"
+          >
+            <el-icon class="theme-icon">
+              <component :is="getThemeIcon(theme.icon)" />
+            </el-icon>
+            <span>{{ theme.label }}</span>
+            <el-icon v-if="currentTheme === theme.value" class="check-icon">
+              <Check />
+            </el-icon>
+          </div>
+        </div>
+        
+        <!-- 添加事件按钮 -->
+        <div class="mobile-action-section">
+          <el-button 
+            type="primary" 
+            size="large"
+            @click="$router.push('/event/add'); showMobileMenu = false"
+            class="mobile-add-btn"
+          >
+            <el-icon><Plus /></el-icon>
+            添加事件
+          </el-button>
+        </div>
       </div>
     </el-drawer>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Calendar, Timeline, Search, Plus, TrendCharts, Moon, Menu, House } from '@element-plus/icons-vue'
+import { ref, computed } from 'vue'
+import { 
+  Calendar, Clock, Search, Plus, TrendCharts, Menu, House,
+  Sunny, Moon, Monitor, Check
+} from '@element-plus/icons-vue'
+import { useTheme, THEMES } from '@/composables/useTheme'
 
 const showMobileMenu = ref(false)
 
 const menuItems = [
   { path: '/', title: '首页', icon: House },
-  { path: '/timeline', title: '时间线', icon: Timeline },
+  { path: '/timeline', title: '时间线', icon: Clock },
   { path: '/search', title: '搜索', icon: Search },
   { path: '/statistics', title: '统计', icon: TrendCharts }
 ]
 
-const toggleTheme = () => {
-  // 暂时留空，后续可以实现主题切换
-  console.log('主题切换功能待实现')
+// 使用主题系统
+const { 
+  currentTheme, 
+  appliedTheme, 
+  themeOptions, 
+  setTheme, 
+  isLight, 
+  isDark, 
+  isSystem 
+} = useTheme()
+
+// 当前主题图标
+const currentThemeIcon = computed(() => {
+  if (currentTheme.value === THEMES.LIGHT) return Sunny
+  if (currentTheme.value === THEMES.DARK) return Moon
+  return Monitor // system
+})
+
+// 获取主题图标组件
+const getThemeIcon = (iconName) => {
+  const iconMap = {
+    sunny: Sunny,
+    moon: Moon,
+    monitor: Monitor
+  }
+  return iconMap[iconName] || Monitor
 }
 </script>
 
@@ -183,11 +272,13 @@ const toggleTheme = () => {
 }
 
 .mobile-menu {
+  padding: 0;
+  
   .mobile-nav-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px;
+    padding: 16px 20px;
     color: var(--text-primary);
     text-decoration: none;
     border-bottom: 1px solid var(--border-color);
@@ -201,6 +292,72 @@ const toggleTheme = () => {
     span {
       font-size: 16px;
       font-weight: 500;
+    }
+  }
+  
+  .mobile-menu-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 10px 0;
+  }
+  
+  .mobile-theme-section {
+    padding: 20px;
+    
+    .mobile-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .mobile-theme-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin: 4px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      .theme-icon {
+        font-size: 18px;
+        color: #409eff;
+      }
+      
+      span {
+        flex: 1;
+        font-size: 15px;
+      }
+      
+      .check-icon {
+        font-size: 16px;
+        color: #67c23a;
+      }
+      
+      &:hover {
+        background: var(--bg-secondary);
+      }
+      
+      &.active {
+        background: rgba(64, 158, 255, 0.1);
+        color: #409eff;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .mobile-action-section {
+    padding: 20px;
+    
+    .mobile-add-btn {
+      width: 100%;
+      height: 48px;
+      font-size: 16px;
+      font-weight: 600;
     }
   }
 }
@@ -221,6 +378,53 @@ const toggleTheme = () => {
   
   .logo-section .title h1 {
     font-size: 20px;
+  }
+}
+
+// 主题切换样式
+.theme-dropdown {
+  .theme-toggle {
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &:hover {
+      color: white;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+:deep(.theme-option) {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  min-width: 140px;
+  
+  .theme-icon {
+    font-size: 16px;
+    color: #409eff;
+  }
+  
+  span {
+    flex: 1;
+    font-size: 14px;
+  }
+  
+  .check-icon {
+    font-size: 14px;
+    color: #67c23a;
+  }
+  
+  &:hover {
+    background: rgba(64, 158, 255, 0.1);
+  }
+  
+  &.is-disabled {
+    background: rgba(64, 158, 255, 0.05);
+    color: #409eff;
+    font-weight: 500;
   }
 }
 

@@ -11,9 +11,14 @@
 <script setup>
 import NavHeader from './components/NavHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import { useTheme } from '@/composables/useTheme'
+
+// 初始化主题系统
+const { currentTheme, appliedTheme } = useTheme()
 
 // 应用已加载完成
 console.log('Grand Things应用已完全加载！')
+console.log('当前主题:', currentTheme.value, '实际应用:', appliedTheme.value)
 </script>
 
 <style lang="scss">
@@ -21,8 +26,10 @@ console.log('Grand Things应用已完全加载！')
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-bg);
   background-attachment: fixed;
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .main-content {
@@ -37,5 +44,10 @@ console.log('Grand Things应用已完全加载！')
   .main-content {
     padding: 10px;
   }
+}
+
+// 主题过渡动画
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
 }
 </style> 

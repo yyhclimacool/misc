@@ -1,7 +1,8 @@
 // 全局样式文件
 
-// 颜色变量
+// 主题颜色变量
 :root {
+  // 品牌色（不变）
   --primary-color: #667eea;
   --primary-dark: #5a67d8;
   --secondary-color: #764ba2;
@@ -9,15 +10,48 @@
   --success-color: #68d391;
   --warning-color: #fbb6ce;
   --error-color: #fc8181;
+  
+  // 默认主题（浅色）
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
   --text-light: #a0aec0;
   --bg-primary: #ffffff;
   --bg-secondary: #f7fafc;
+  --bg-tertiary: #e2e8f0;
   --border-color: #e2e8f0;
-  --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  // 布局
   --border-radius: 12px;
+  --shadow: 0 10px 25px var(--shadow-color);
+  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+// 深色主题
+html.theme-dark {
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-light: #a0a0a0;
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #404040;
+  --border-color: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --gradient-bg: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+}
+
+// 浅色主题（显式定义）
+html.theme-light {
+  --text-primary: #2c3e50;
+  --text-secondary: #34495e;
+  --text-light: #7f8c8d;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 // 全局重置
@@ -32,9 +66,10 @@ body {
                'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: var(--gradient-bg);
   background-attachment: fixed;
   min-height: 100vh;
+  transition: color 0.3s ease, background 0.3s ease;
 }
 
 // 工具类

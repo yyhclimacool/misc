@@ -14,10 +14,10 @@
             <el-icon><Plus /></el-icon>
             添加你的第一个事件
           </el-button>
-          <el-button size="large" @click="$router.push('/timeline')">
-            <el-icon><Timeline /></el-icon>
-            查看时间线
-          </el-button>
+                  <el-button size="large" @click="$router.push('/timeline')">
+          <el-icon><Clock /></el-icon>
+          查看时间线
+        </el-button>
         </div>
       </div>
       <div class="hero-image">
@@ -135,7 +135,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import {
-  Plus, Timeline, ArrowRight, Document,
+  Plus, Clock, ArrowRight, Document,
   MagicStick, Search, TrendCharts, Trophy,
   Calendar, Bell
 } from '@element-plus/icons-vue'
@@ -161,7 +161,7 @@ const features = [
   {
     title: '时间线展示',
     description: '直观的时间线布局，清晰展示事件发展历程',
-    icon: Timeline
+    icon: Clock
   },
   {
     title: '高效搜索',

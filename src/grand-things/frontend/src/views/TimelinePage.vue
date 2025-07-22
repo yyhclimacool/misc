@@ -3,10 +3,10 @@
     <!-- 页面头部 -->
     <div class="page-header fade-in-up">
       <div class="header-content">
-        <h1 class="page-title">
-          <el-icon><Timeline /></el-icon>
-          事件时间线
-        </h1>
+              <h1 class="page-title">
+        <el-icon><Clock /></el-icon>
+        事件时间线
+      </h1>
         <p class="page-subtitle">按时间顺序展示你的重要时刻</p>
       </div>
       
@@ -192,27 +192,40 @@
       </div>
     </div>
 
-    <!-- 分页 -->
-    <div v-if="events.length > 0" class="pagination-wrapper">
-      <el-pagination
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :total="totalEvents"
-        layout="prev, pager, next, jumper, total"
-        @current-change="loadEvents"
-        background
-      />
+    <!-- 加载更多提示 -->
+    <div v-if="hasMore && !loading" class="load-more-wrapper">
+      <div class="load-more-trigger" ref="loadMoreTrigger">
+        <el-button text @click="loadMoreEvents">
+          <el-icon><ArrowDown /></el-icon>
+          加载更多事件
+        </el-button>
+      </div>
+    </div>
+    
+    <!-- 加载中提示 -->
+    <div v-if="loading && events.length > 0" class="loading-more">
+      <el-icon class="is-loading"><Loading /></el-icon>
+      <span>加载更多中...</span>
+    </div>
+    
+    <!-- 没有更多数据提示 -->
+    <div v-if="!hasMore && events.length > 0" class="no-more">
+      <el-divider>
+        <el-icon><Check /></el-icon>
+        已显示全部事件
+      </el-divider>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { 
-  Timeline, Operation, Menu, Refresh, Close, Document,
-  TrendCharts, Coin, Cpu, Rocket, Monitor, 
-  MagicStick, House, Truck, VideoCamera, Football
+  Clock, Operation, Menu, Refresh, Close, Document,
+  TrendCharts, Coin, Cpu, Star, Monitor, 
+  MagicStick, House, Van, VideoCamera, Football,
+  ArrowDown, Loading, Check
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
 import dayjs from 'dayjs'
@@ -227,41 +240,114 @@ const selectedEvent = ref(null)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const totalEvents = ref(0)
+const hasMore = ref(true)
+const loadMoreTrigger = ref(null)
 
 // 页面加载
 onMounted(async () => {
-  await loadCategories()
-  await loadEvents()
+  try {
+    console.log('时间线页面开始加载...')
+    await loadCategories()
+    console.log('分类加载完成')
+    await loadEvents() 
+    console.log('事件加载完成')
+    
+    // 设置无限滚动
+    setupInfiniteScroll()
+  } catch (error) {
+    console.error('时间线页面加载失败:', error)
+  }
 })
 
 // 加载分类
 async function loadCategories() {
   try {
+    console.log('正在加载分类...')
     categories.value = await eventAPI.getCategoriesStats()
+    console.log('分类数据:', categories.value)
   } catch (error) {
     console.error('加载分类失败:', error)
+    // 设置模拟数据以防API失败
+    categories.value = [
+      { category: '科技', count: 1 },
+      { category: '金融', count: 0 },
+      { category: '创业', count: 0 }
+    ]
   }
 }
 
-// 加载事件
+// 加载事件（重置加载）
 async function loadEvents() {
   loading.value = true
+  currentPage.value = 1
+  
   try {
+    console.log('正在加载事件...')
     const response = await eventAPI.getTimeline({
-      page: currentPage.value,
+      page: 1,
       size: pageSize.value,
       category: selectedCategory.value || undefined
     })
-    events.value = response.events || []
+    
+    // 按时间倒序排列（最新在前）
+    const eventList = (response.events || []).sort((a, b) => 
+      new Date(b.event_date) - new Date(a.event_date)
+    )
+    
+    events.value = eventList
     totalEvents.value = response.total || 0
+    hasMore.value = eventList.length >= pageSize.value
     
     // 水平时间线默认选择第一个事件
     if (layoutMode.value === 'horizontal' && events.value.length > 0) {
       selectedEvent.value = events.value[0]
     }
+    
+    console.log(`加载了 ${eventList.length} 个事件，总数: ${totalEvents.value}`)
   } catch (error) {
     console.error('加载事件失败:', error)
     ElMessage.error('加载事件失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 加载更多事件
+async function loadMoreEvents() {
+  if (loading.value || !hasMore.value) return
+  
+  loading.value = true
+  currentPage.value++
+  
+  try {
+    console.log(`正在加载第 ${currentPage.value} 页...`)
+    const response = await eventAPI.getTimeline({
+      page: currentPage.value,
+      size: pageSize.value,
+      category: selectedCategory.value || undefined
+    })
+    
+    const newEvents = (response.events || []).sort((a, b) => 
+      new Date(b.event_date) - new Date(a.event_date)
+    )
+    
+    if (newEvents.length > 0) {
+      // 合并新事件，保持时间倒序
+      const allEvents = [...events.value, ...newEvents]
+      events.value = allEvents.sort((a, b) => 
+        new Date(b.event_date) - new Date(a.event_date)
+      )
+      
+      console.log(`新增 ${newEvents.length} 个事件`)
+    }
+    
+    // 检查是否还有更多数据
+    hasMore.value = newEvents.length >= pageSize.value
+    
+  } catch (error) {
+    console.error('加载更多事件失败:', error)
+    ElMessage.error('加载更多事件失败')
+    currentPage.value-- // 回退页码
   } finally {
     loading.value = false
   }
@@ -350,12 +436,12 @@ function getCategoryIcon(category) {
   const iconMap = {
     '金融': TrendCharts,
     '科技': Cpu,
-    '创业': Rocket,
+    '创业': Star,
     '互联网': Monitor,
     '医疗': MagicStick,
     '教育': House,
     '房产': House,
-    '汽车': Truck,
+    '汽车': Van,
     '娱乐': VideoCamera,
     '体育': Football
   }
@@ -367,8 +453,17 @@ function getTimelinePosition(eventDate) {
   if (events.value.length === 0) return 0
   
   const dates = events.value.map(e => dayjs(e.event_date))
-  const minDate = dayjs.min(dates)
-  const maxDate = dayjs.max(dates)
+  if (dates.length === 0) return 50
+  
+  // 找到最小和最大日期
+  let minDate = dates[0]
+  let maxDate = dates[0]
+  
+  for (const date of dates) {
+    if (date.isBefore(minDate)) minDate = date
+    if (date.isAfter(maxDate)) maxDate = date
+  }
+  
   const currentDate = dayjs(eventDate)
   
   if (minDate.isSame(maxDate)) return 50
@@ -377,6 +472,32 @@ function getTimelinePosition(eventDate) {
   const eventDuration = currentDate.diff(minDate)
   
   return Math.max(5, Math.min(95, (eventDuration / totalDuration) * 90 + 5))
+}
+
+// 设置无限滚动
+function setupInfiniteScroll() {
+  if (!loadMoreTrigger.value) return
+  
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && hasMore.value && !loading.value) {
+          console.log('触发无限滚动，加载更多数据...')
+          loadMoreEvents()
+        }
+      })
+    },
+    {
+      rootMargin: '100px' // 提前100px触发
+    }
+  )
+  
+  observer.observe(loadMoreTrigger.value)
+  
+  // 组件卸载时清理观察器
+  onUnmounted(() => {
+    observer.disconnect()
+  })
 }
 </script>
 
@@ -684,17 +805,62 @@ function getTimelinePosition(eventDate) {
   }
 }
 
-// 分页
-.pagination-wrapper {
+// 无限滚动相关样式
+.load-more-wrapper {
   display: flex;
   justify-content: center;
-  padding: 40px 0;
+  padding: 60px 0 40px;
 
-  :deep(.el-pagination) {
-    --el-pagination-bg-color: rgba(255, 255, 255, 0.1);
-    --el-pagination-text-color: rgba(255, 255, 255, 0.8);
-    --el-pagination-border-radius: 8px;
+  .load-more-trigger {
+    padding: 20px;
+    cursor: pointer;
+    
+    .el-button {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      
+      &:hover {
+        color: #409eff;
+        background: rgba(64, 158, 255, 0.1);
+      }
+    }
   }
+}
+
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  gap: 12px;
+
+  .is-loading {
+    animation: rotating 1s linear infinite;
+  }
+}
+
+.no-more {
+  padding: 40px 0;
+  text-align: center;
+
+  :deep(.el-divider__text) {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  :deep(.el-divider) {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes rotating {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 // 响应式设计

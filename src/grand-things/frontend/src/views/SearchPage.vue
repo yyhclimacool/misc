@@ -237,7 +237,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
   Search, DocumentDelete, TrendCharts, 
-  Calendar, Trophy, Clock, Tag, 
+  Calendar, Trophy, Clock, CollectionTag, 
   Star, Coin, Cpu 
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
@@ -297,7 +297,7 @@ const searchSuggestions = [
   {
     title: '热门标签',
     description: '基于标签发现相关事件',
-    icon: Tag,
+    icon: CollectionTag,
     action: 'tags'
   }
 ]
