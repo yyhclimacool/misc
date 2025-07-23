@@ -2,6 +2,7 @@
   "name": "grand-things-frontend",
   "version": "1.0.0",
   "description": "Grand Things - 现代化大事记应用前端",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,7 +22,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",
     "vite": "^5.0.8",
-    "sass": "^1.69.5",
+    "sass": "^1.77.8",
     "@types/node": "^20.10.5"
   }
 } 
