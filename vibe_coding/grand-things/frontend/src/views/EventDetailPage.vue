@@ -312,8 +312,8 @@ async function loadEvent() {
 
 // 编辑事件
 function editEvent() {
-  // TODO: 实现编辑功能
-  ElMessage.info('编辑功能开发中...')
+  // 跳转到编辑页面
+  router.push(`/event/edit/${event.value.id}`)
 }
 
 // 删除事件
@@ -432,17 +432,18 @@ function exportEvent() {
 
 // 复制事件
 function duplicateEvent() {
-  router.push({
-    path: '/event/add',
-    query: {
-      template: JSON.stringify({
-        title: event.value.title + ' (副本)',
-        description: event.value.description,
-        category: event.value.category,
-        tags: event.value.tags
-      })
-    }
-  })
+  // 创建副本数据并跳转到添加页面
+  const duplicateData = {
+    title: event.value.title + ' (副本)',
+    description: event.value.description,
+    category: event.value.category,
+    tags: event.value.tags,
+    event_date: dayjs().format('YYYY-MM-DDTHH:mm:ss') // 使用当前时间
+  }
+  
+  // 可以通过sessionStorage传递数据避免URL过长
+  sessionStorage.setItem('duplicateEventData', JSON.stringify(duplicateData))
+  router.push('/event/add')
 }
 
 // 查找相似事件

@@ -534,7 +534,8 @@ function viewEventDetail(eventId) {
 // 编辑事件
 function editEvent(event) {
   console.log('编辑事件:', event)
-  // TODO: 打开编辑对话框
+  // 跳转到编辑页面
+  router.push(`/event/edit/${event.id}`)
 }
 
 // 删除事件

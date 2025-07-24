@@ -77,6 +77,12 @@ const routes = [
     meta: { title: '添加事件' }
   },
   {
+    path: '/event/edit/:id',
+    name: 'EditEvent',
+    component: () => import('../views/AddEventPage.vue'),
+    meta: { title: '编辑事件' }
+  },
+  {
     path: '/event/:id',
     name: 'EventDetail',
     component: () => import('../views/EventDetailPage.vue'),

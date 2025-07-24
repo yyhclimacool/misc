@@ -3,10 +3,10 @@
     <!-- 页面头部 -->
     <div class="page-header fade-in-up">
       <h1 class="page-title">
-        <el-icon><Plus /></el-icon>
-        添加新事件
+        <el-icon><Plus v-if="!isEditMode" /><Edit v-else /></el-icon>
+        {{ isEditMode ? '编辑事件' : '添加新事件' }}
       </h1>
-      <p class="page-subtitle">记录重要时刻，让每一个瞬间都值得珍藏</p>
+      <p class="page-subtitle">{{ isEditMode ? '修改事件信息，让记录更加准确' : '记录重要时刻，让每一个瞬间都值得珍藏' }}</p>
     </div>
 
     <!-- 添加表单 -->
@@ -14,7 +14,7 @@
       <div class="form-content">
         <!-- 主要表单 -->
         <div class="main-form card fade-in-up">
-          <h2 class="form-title">事件信息</h2>
+          <h2 class="form-title">{{ isEditMode ? '修改事件信息' : '事件信息' }}</h2>
           
           <el-form 
             ref="eventFormRef" 
@@ -85,7 +85,9 @@
             </el-form-item>
 
             <div class="form-actions">
-              <el-button size="large" @click="resetForm">重置</el-button>
+              <el-button size="large" @click="isEditMode ? $router.back() : resetForm">
+                {{ isEditMode ? '取消' : '重置' }}
+              </el-button>
               <el-button 
                 type="primary" 
                 size="large" 
@@ -93,7 +95,7 @@
                 @click="submitEvent"
               >
                 <el-icon><Check /></el-icon>
-                添加事件
+                {{ isEditMode ? '保存修改' : '添加事件' }}
               </el-button>
             </div>
           </el-form>
@@ -201,16 +203,21 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { 
   Plus, Check, InfoFilled, MagicStick, 
-  FolderOpened 
+  FolderOpened, Edit
 } from '@element-plus/icons-vue'
 import { eventAPI } from '@/api/events'
 import dayjs from 'dayjs'
 
 const router = useRouter()
+const route = useRoute()
+
+// 编辑模式相关
+const isEditMode = computed(() => route.name === 'EditEvent')
+const eventId = computed(() => route.params.id)
 
 // 响应式数据
 const eventFormRef = ref(null)
@@ -253,6 +260,67 @@ const allTags = computed(() => {
     eventForm.value.tags.split(',').map(t => t.trim()).filter(Boolean) : []
   return [...new Set([...extractedTags.value, ...userTags])]
 })
+
+// 组件挂载
+onMounted(async () => {
+  if (isEditMode.value && eventId.value) {
+    await loadEventForEdit(eventId.value)
+  } else {
+    // 检查是否有复制的事件数据
+    const duplicateData = sessionStorage.getItem('duplicateEventData')
+    if (duplicateData) {
+      try {
+        const data = JSON.parse(duplicateData)
+        eventForm.value = {
+          title: data.title || '',
+          description: data.description || '',
+          event_date: data.event_date || dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+          tags: data.tags || '',
+          category: data.category || ''
+        }
+        
+        // 清除sessionStorage中的数据
+        sessionStorage.removeItem('duplicateEventData')
+        
+        // 触发标签提取
+        await extractTagsAndCategory()
+        
+        ElMessage.success('已为您复制事件数据')
+      } catch (error) {
+        console.error('解析复制数据失败:', error)
+        sessionStorage.removeItem('duplicateEventData')
+      }
+    }
+  }
+})
+
+// 加载编辑事件数据
+async function loadEventForEdit(id) {
+  try {
+    submitting.value = true
+    const eventData = await eventAPI.getEvent(id)
+    
+    // 填充表单数据
+    eventForm.value = {
+      title: eventData.title || '',
+      description: eventData.description || '',
+      event_date: eventData.event_date || dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+      tags: eventData.tags || '',
+      category: eventData.category || ''
+    }
+    
+    // 触发标签提取（用于预览）
+    await extractTagsAndCategory()
+    
+    ElMessage.success('事件数据加载成功')
+  } catch (error) {
+    console.error('加载事件数据失败:', error)
+    ElMessage.error('加载事件数据失败，请重试')
+    router.push('/timeline')
+  } finally {
+    submitting.value = false
+  }
+}
 
 // 监听内容变化
 let extractTimer = null
@@ -358,16 +426,24 @@ async function submitEvent() {
       tags: allTags.value.join(',')
     }
     
-    await eventAPI.createEvent(eventData)
+    if (isEditMode.value) {
+      // 编辑模式：更新事件
+      await eventAPI.updateEvent(eventId.value, eventData)
+      ElMessage.success('事件修改成功！')
+    } else {
+      // 添加模式：创建事件
+      await eventAPI.createEvent(eventData)
+      ElMessage.success('事件添加成功！')
+    }
     
-    ElMessage.success('事件添加成功！')
     router.push('/timeline')
   } catch (error) {
     console.error('提交事件失败:', error)
     if (typeof error === 'string') {
       ElMessage.error(error)
     } else {
-      ElMessage.error('添加事件失败，请重试')
+      const action = isEditMode.value ? '修改' : '添加'
+      ElMessage.error(`${action}事件失败，请重试`)
     }
   } finally {
     submitting.value = false
