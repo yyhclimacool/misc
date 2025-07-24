@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import create_tables
-from .api import events
+from .api import events, auth
 
 # 创建FastAPI应用
 app = FastAPI(
@@ -21,7 +21,8 @@ app.add_middleware(
 )
 
 # 注册路由
-app.include_router(events.router)
+app.include_router(auth.router)  # 认证路由
+app.include_router(events.router)  # 事件路由
 
 
 # 启动时创建数据库表

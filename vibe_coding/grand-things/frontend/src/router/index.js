@@ -53,6 +53,12 @@ const routes = [
     meta: { title: '首页' }
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/LoginPage.vue'),
+    meta: { title: '登录' }
+  },
+  {
     path: '/test',
     name: 'Test',
     component: TestPage,

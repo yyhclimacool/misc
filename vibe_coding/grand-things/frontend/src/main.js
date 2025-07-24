@@ -52,6 +52,12 @@ try {
   console.log('挂载应用...')
   app.mount('#app')
   
+  // 初始化用户认证状态
+  console.log('初始化用户认证状态...')
+  const { useAuthStore } = await import('./stores/auth')
+  const authStore = useAuthStore()
+  authStore.initAuth()
+  
   console.log('Vue应用初始化完成！')
   
 } catch (error) {

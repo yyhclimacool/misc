@@ -28,7 +28,7 @@ fi
 # 启动后端服务
 echo "🔧 启动后端服务..."
 cd backend || exit
-uv run run.py &
+uv run main.py &
 BACKEND_PID=$!
 cd ..
 

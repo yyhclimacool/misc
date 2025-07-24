@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, validator
 from datetime import datetime
 from typing import List, Optional
 
@@ -77,3 +77,61 @@ class SearchRequest(BaseModel):
     category: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
+
+
+# 用户相关的Pydantic模型
+class UserBase(BaseModel):
+    """用户基础模型"""
+    email: EmailStr
+    username: str
+    full_name: Optional[str] = None
+
+
+class UserCreate(UserBase):
+    """用户创建模型"""
+    password: str
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if len(v) < 6:
+            raise ValueError('密码长度至少6位')
+        return v
+    
+    @validator('username')
+    def validate_username(cls, v):
+        if len(v) < 3:
+            raise ValueError('用户名长度至少3位')
+        if not v.replace('_', '').replace('-', '').isalnum():
+            raise ValueError('用户名只能包含字母、数字、下划线和连字符')
+        return v
+
+
+class UserLogin(BaseModel):
+    """用户登录模型"""
+    email: EmailStr
+    password: str
+
+
+class UserResponse(UserBase):
+    """用户响应模型"""
+    id: int
+    is_active: bool
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class UserUpdate(BaseModel):
+    """用户更新模型"""
+    username: Optional[str] = None
+    full_name: Optional[str] = None
+    
+    @validator('username')
+    def validate_username(cls, v):
+        if v is not None:
+            if len(v) < 3:
+                raise ValueError('用户名长度至少3位')
+            if not v.replace('_', '').replace('-', '').isalnum():
+                raise ValueError('用户名只能包含字母、数字、下划线和连字符')
+        return v

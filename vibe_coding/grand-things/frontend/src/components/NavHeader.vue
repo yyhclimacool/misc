@@ -32,10 +32,49 @@
 
       <!-- 快捷操作 -->
       <div class="actions">
-        <el-button type="primary" size="default" @click="$router.push('/event/add')">
-          <el-icon><Plus /></el-icon>
-          添加事件
-        </el-button>
+        <!-- 用户区域 -->
+        <div v-if="!authStore.isAuthenticated" class="auth-section">
+          <el-button @click="$router.push('/login')" size="default">
+            <el-icon><User /></el-icon>
+            登录
+          </el-button>
+        </div>
+
+        <div v-else class="user-section">
+          <!-- 添加事件按钮 -->
+          <el-button type="primary" size="default" @click="$router.push('/event/add')">
+            <el-icon><Plus /></el-icon>
+            添加事件
+          </el-button>
+
+          <!-- 用户下拉菜单 -->
+          <el-dropdown trigger="click" @command="handleUserCommand" class="user-dropdown">
+            <div class="user-info">
+              <el-avatar :size="32">
+                <el-icon><User /></el-icon>
+              </el-avatar>
+              <span class="username">{{ authStore.userInfo?.username }}</span>
+              <el-icon class="dropdown-icon"><ArrowDown /></el-icon>  
+            </div>
+            
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="profile">
+                  <el-icon><User /></el-icon>
+                  个人资料
+                </el-dropdown-item>
+                <el-dropdown-item command="settings">
+                  <el-icon><Setting /></el-icon>
+                  设置
+                </el-dropdown-item>
+                <el-dropdown-item divided command="logout">
+                  <el-icon><SwitchButton /></el-icon>
+                  退出登录
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
         
         <!-- 主题切换 -->
         <el-dropdown @command="setTheme" class="theme-dropdown">
@@ -140,10 +179,15 @@
 import { ref, computed } from 'vue'
 import { 
   Calendar, Clock, Search, Plus, TrendCharts, Menu, House,
-  Sunny, Moon, Monitor, Check
+  Sunny, Moon, Monitor, Check, User, ArrowDown, Setting, SwitchButton
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 import { useTheme, THEMES } from '@/composables/useTheme'
+import { useAuthStore } from '@/stores/auth'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const showMobileMenu = ref(false)
 
 const menuItems = [
@@ -179,6 +223,41 @@ const getThemeIcon = (iconName) => {
     monitor: Monitor
   }
   return iconMap[iconName] || Monitor
+}
+
+// 处理用户下拉菜单命令
+const handleUserCommand = async (command) => {
+  switch (command) {
+    case 'profile':
+      // TODO: 跳转到个人资料页面
+      console.log('跳转到个人资料')
+      break
+    case 'settings':
+      // TODO: 跳转到设置页面
+      console.log('跳转到设置')
+      break
+    case 'logout':
+      try {
+        await ElMessageBox.confirm(
+          '确定要退出登录吗？',
+          '确认退出',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }
+        )
+        
+        await authStore.logout()
+        router.push('/login')
+      } catch (error) {
+        // 用户取消退出或退出失败
+        if (error !== 'cancel') {
+          console.error('退出登录失败:', error)
+        }
+      }
+      break
+  }
 }
 </script>
 
@@ -261,10 +340,53 @@ const getThemeIcon = (iconName) => {
   }
 }
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .auth-section {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .user-dropdown {
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 4px 8px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+
+          .username {
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+          }
+
+          .dropdown-icon {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            transition: transform 0.3s ease;
+          }
+
+          &:hover .dropdown-icon {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
 }
 
 .mobile-menu-btn {
