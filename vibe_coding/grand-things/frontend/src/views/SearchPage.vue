@@ -96,7 +96,7 @@
           <el-tag 
             v-for="filter in quickFilters"
             :key="filter.key"
-            :type="isActiveFilter(filter) ? 'primary' : ''"
+            :type="isActiveFilter(filter) ? 'primary' : undefined"
             effect="plain"
             class="filter-tag"
             @click="applyQuickFilter(filter)"
@@ -232,7 +232,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
@@ -261,7 +261,8 @@ const searchForm = ref({
   query: '',
   category: '',
   tags: [],
-  dateRange: null
+  dateRange: null,
+  impactLevel: ''
 })
 
 // 快捷筛选
@@ -279,25 +280,25 @@ const searchSuggestions = [
   {
     title: '按分类浏览',
     description: '探索不同分类的事件',
-    icon: TrendCharts,
+    icon: markRaw(TrendCharts),
     action: 'category'
   },
   {
     title: '最近事件',
     description: '查看最新添加的事件',
-    icon: Clock,
+    icon: markRaw(Clock),
     action: 'recent'
   },
   {
     title: '重要事件',
     description: '查看高影响力的事件',
-    icon: Trophy,
+    icon: markRaw(Trophy),
     action: 'important'
   },
   {
     title: '热门标签',
     description: '基于标签发现相关事件',
-    icon: CollectionTag,
+    icon: markRaw(CollectionTag),
     action: 'tags'
   }
 ]
@@ -355,7 +356,8 @@ async function performSearch() {
       category: searchForm.value.category,
       tags: searchForm.value.tags,
       start_date: searchForm.value.dateRange?.[0],
-      end_date: searchForm.value.dateRange?.[1]
+      end_date: searchForm.value.dateRange?.[1],
+      impact_level: searchForm.value.impactLevel
     }
     
     const results = await eventAPI.searchEvents(params)
@@ -420,6 +422,8 @@ function isActiveFilter(filter) {
       return searchForm.value.category === filter.value
     case 'date':
       return getCurrentDateRange() === filter.value
+    case 'impact':
+      return searchForm.value.impactLevel === filter.value
     default:
       return false
   }
@@ -434,7 +438,7 @@ function applyQuickFilter(filter) {
       searchForm.value.dateRange = getDateRangeForFilter(filter.value)
       break
     case 'impact':
-      // TODO: 实现影响力筛选
+      searchForm.value.impactLevel = searchForm.value.impactLevel === filter.value ? '' : filter.value
       break
   }
   onFilterChange()
@@ -509,7 +513,8 @@ function clearSearch() {
     query: '',
     category: '',
     tags: [],
-    dateRange: null
+    dateRange: null,
+    impactLevel: ''
   }
   searchResults.value = []
   hasSearched.value = false

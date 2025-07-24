@@ -90,6 +90,9 @@ def search_events(
     category: Optional[str] = None,
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
+    impact_level: Optional[str] = Query(
+        None, description="影响力级别: high, medium, low"
+    ),
     db: Session = Depends(get_db),
 ):
     """搜索事件"""
@@ -113,6 +116,16 @@ def search_events(
 
     if end_date:
         db_query = db_query.filter(DBEvent.event_date <= end_date)
+
+    if impact_level:
+        if impact_level == "high":
+            db_query = db_query.filter(DBEvent.impact_score >= 7)
+        elif impact_level == "medium":
+            db_query = db_query.filter(
+                DBEvent.impact_score >= 4, DBEvent.impact_score < 7
+            )
+        elif impact_level == "low":
+            db_query = db_query.filter(DBEvent.impact_score < 4)
 
     return db_query.order_by(DBEvent.event_date.desc()).limit(50).all()
 

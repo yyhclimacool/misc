@@ -133,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, markRaw } from 'vue'
 import {
   Plus, Clock, ArrowRight, Document,
   MagicStick, Search, TrendCharts, Trophy,
@@ -146,32 +146,32 @@ import dayjs from 'dayjs'
 const loading = ref(false)
 const recentEvents = ref([])
 const stats = ref([
-  { key: 'total', label: '总事件数', value: 0, icon: Calendar },
-  { key: 'categories', label: '事件分类', value: 0, icon: TrendCharts },
-      { key: 'thisMonth', label: '本月新增', value: 0, icon: Bell },
-  { key: 'highImpact', label: '重要事件', value: 0, icon: Trophy }
+  { key: 'total', label: '总事件数', value: 0, icon: markRaw(Calendar) },
+  { key: 'categories', label: '事件分类', value: 0, icon: markRaw(TrendCharts) },
+      { key: 'thisMonth', label: '本月新增', value: 0, icon: markRaw(Bell) },
+  { key: 'highImpact', label: '重要事件', value: 0, icon: markRaw(Trophy) }
 ])
 
 const features = [
   {
     title: '智能标签提取',
     description: '自动分析事件内容，提取相关标签和分类',
-    icon: MagicStick
+    icon: markRaw(MagicStick)
   },
   {
     title: '时间线展示',
     description: '直观的时间线布局，清晰展示事件发展历程',
-    icon: Clock
+    icon: markRaw(Clock)
   },
   {
     title: '高效搜索',
     description: '支持多维度搜索，快速找到想要的事件',
-    icon: Search
+    icon: markRaw(Search)
   },
   {
     title: '数据统计',
     description: '丰富的图表统计，深入了解事件分布情况',
-    icon: TrendCharts
+    icon: markRaw(TrendCharts)
   }
 ]
 

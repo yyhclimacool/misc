@@ -175,7 +175,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { 
@@ -196,9 +196,9 @@ const totalEvents = ref(0)
 
 // 概览统计
 const overviewStats = ref([
-  { key: 'total', label: '总事件数', value: 0, icon: Document, color: '#667eea', growth: 12 },
-  { key: 'categories', label: '事件分类', value: 0, icon: TrendCharts, color: '#764ba2' },
-  { key: 'thisMonth', label: '本月新增', value: 0, icon: TrendCharts, color: '#f093fb', growth: 25 }
+  { key: 'total', label: '总事件数', value: 0, icon: markRaw(Document), color: '#667eea', growth: 12 },
+  { key: 'categories', label: '事件分类', value: 0, icon: markRaw(TrendCharts), color: '#764ba2' },
+  { key: 'thisMonth', label: '本月新增', value: 0, icon: markRaw(TrendCharts), color: '#f093fb', growth: 25 }
 ])
 
 // 热门标签
