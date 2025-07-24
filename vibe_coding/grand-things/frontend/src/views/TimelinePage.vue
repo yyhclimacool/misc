@@ -433,8 +433,19 @@ async function deleteEvent(event) {
     )
     
     await eventAPI.deleteEvent(event.id)
+    
+    // 关闭事件详情对话框
+    detailDialogVisible.value = false
+    selectedEventDetail.value = null
+    
+    // 从事件列表中移除已删除的事件
+    const index = events.value.findIndex(item => item.id === event.id)
+    if (index > -1) {
+      events.value.splice(index, 1)
+      totalEvents.value = Math.max(0, totalEvents.value - 1)
+    }
+    
     ElMessage.success('删除成功')
-    await loadEvents()
   } catch (error) {
     if (error !== 'cancel') {
       console.error('删除事件失败:', error)
