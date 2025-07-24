@@ -82,6 +82,7 @@ class SearchRequest(BaseModel):
 # 用户相关的Pydantic模型
 class UserBase(BaseModel):
     """用户基础模型"""
+
     email: EmailStr
     username: str
     full_name: Optional[str] = None
@@ -89,49 +90,66 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """用户创建模型"""
+
     password: str
-    
-    @validator('password')
+
+    @validator("password")
     def validate_password(cls, v):
         if len(v) < 6:
-            raise ValueError('密码长度至少6位')
+            raise ValueError("密码长度至少6位")
         return v
-    
-    @validator('username')
+
+    @validator("username")
     def validate_username(cls, v):
         if len(v) < 3:
-            raise ValueError('用户名长度至少3位')
-        if not v.replace('_', '').replace('-', '').isalnum():
-            raise ValueError('用户名只能包含字母、数字、下划线和连字符')
+            raise ValueError("用户名长度至少3位")
+        if not v.replace("_", "").replace("-", "").isalnum():
+            raise ValueError("用户名只能包含字母、数字、下划线和连字符")
         return v
 
 
 class UserLogin(BaseModel):
     """用户登录模型"""
+
     email: EmailStr
     password: str
 
 
 class UserResponse(UserBase):
     """用户响应模型"""
+
     id: int
     is_active: bool
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
 
 class UserUpdate(BaseModel):
     """用户更新模型"""
+
     username: Optional[str] = None
     full_name: Optional[str] = None
-    
-    @validator('username')
+
+    @validator("username")
     def validate_username(cls, v):
         if v is not None:
             if len(v) < 3:
-                raise ValueError('用户名长度至少3位')
-            if not v.replace('_', '').replace('-', '').isalnum():
-                raise ValueError('用户名只能包含字母、数字、下划线和连字符')
+                raise ValueError("用户名长度至少3位")
+            if not v.replace("_", "").replace("-", "").isalnum():
+                raise ValueError("用户名只能包含字母、数字、下划线和连字符")
+        return v
+
+
+class PasswordChangeRequest(BaseModel):
+    """修改密码请求模型"""
+
+    current_password: str
+    new_password: str
+
+    @validator("new_password")
+    def validate_new_password(cls, v):
+        if len(v) < 6:
+            raise ValueError("新密码长度至少6位")
         return v

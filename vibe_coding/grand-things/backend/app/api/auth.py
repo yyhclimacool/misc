@@ -8,7 +8,13 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_active_user, get_user_service
 from app.core.auth import Token
 from app.database import User
-from app.models import UserCreate, UserLogin, UserResponse, UserUpdate
+from app.models import (
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    UserUpdate,
+    PasswordChangeRequest,
+)
 from app.services.user_service import UserService
 
 router = APIRouter(prefix="/auth", tags=["认证"])
@@ -129,4 +135,46 @@ async def check_auth(current_user: User = Depends(get_current_active_user)):
         "username": current_user.username,
         "email": current_user.email,
     }
- 
+
+
+@router.post("/change-password", summary="修改密码")
+async def change_password(
+    password_data: PasswordChangeRequest,
+    current_user: User = Depends(get_current_active_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    """
+    修改当前用户密码
+
+    - **current_password**: 当前密码
+    - **new_password**: 新密码（至少6位）
+    """
+    try:
+        success = user_service.change_password(current_user.id, password_data)
+        if success:
+            return {"message": "密码修改成功"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="密码修改失败"
+            )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/statistics", summary="获取用户统计信息")
+async def get_user_statistics(
+    current_user: User = Depends(get_current_active_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    """
+    获取当前用户的统计信息
+
+    包括事件总数、分类统计、加入时间等
+    """
+    try:
+        stats = user_service.get_user_statistics(current_user.id)
+        return stats
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="获取统计信息失败"
+        )

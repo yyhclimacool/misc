@@ -6,7 +6,13 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.database import User
-from app.models import UserCreate, UserLogin, UserUpdate, UserResponse
+from app.models import (
+    UserCreate,
+    UserLogin,
+    UserUpdate,
+    UserResponse,
+    PasswordChangeRequest,
+)
 from app.core.auth import get_password_hash, verify_password, create_access_token
 
 
@@ -124,4 +130,59 @@ class UserService:
             "token_type": "bearer",
             "user": UserResponse.from_orm(user),
         }
- 
+
+    def change_password(
+        self, user_id: int, password_data: PasswordChangeRequest
+    ) -> bool:
+        """修改用户密码"""
+        user = self.get_user_by_id(user_id)
+        if not user:
+            raise ValueError("用户不存在")
+
+        # 验证当前密码
+        if not verify_password(password_data.current_password, user.hashed_password):
+            raise ValueError("当前密码错误")
+
+        # 设置新密码
+        user.hashed_password = get_password_hash(password_data.new_password)
+
+        try:
+            self.db.commit()
+            return True
+        except IntegrityError:
+            self.db.rollback()
+            raise ValueError("密码修改失败")
+
+    def get_user_statistics(self, user_id: int) -> dict:
+        """获取用户统计信息"""
+        from app.database import Event
+
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return {}
+
+        # 统计用户的事件数据
+        total_events = self.db.query(Event).filter(Event.user_id == user_id).count()
+
+        # 按分类统计
+        from sqlalchemy import func
+
+        category_stats = (
+            self.db.query(Event.category, func.count(Event.id))
+            .filter(Event.user_id == user_id)
+            .group_by(Event.category)
+            .all()
+        )
+
+        return {
+            "total_events": total_events,
+            "categories": (
+                [
+                    {"name": category, "count": count}
+                    for category, count in category_stats
+                ]
+                if category_stats
+                else []
+            ),
+            "joined_date": user.created_at,
+        }

@@ -99,6 +99,12 @@ const routes = [
     name: 'Statistics',
     component: () => import('../views/StatisticsPage.vue'),
     meta: { title: '统计' }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../views/ProfilePage.vue'),
+    meta: { title: '个人资料', requiresAuth: true }
   }
 ]
 
@@ -114,6 +120,19 @@ router.beforeEach((to, from, next) => {
   // 设置页面标题
   if (to.meta.title) {
     document.title = `${to.meta.title} - Grand Things`
+  }
+  
+  // 检查是否需要认证
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem('access_token')
+    const userInfo = localStorage.getItem('user_info')
+    
+    if (!token || !userInfo) {
+      // 未登录，跳转到登录页
+      console.log('页面需要认证，跳转到登录页')
+      next('/login')
+      return
+    }
   }
   
   next()

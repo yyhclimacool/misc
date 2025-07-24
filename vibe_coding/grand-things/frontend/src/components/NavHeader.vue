@@ -179,7 +179,7 @@
 import { ref, computed } from 'vue'
 import { 
   Calendar, Clock, Search, Plus, TrendCharts, Menu, House,
-  Sunny, Moon, Monitor, Check, User, ArrowDown, Setting, SwitchButton
+  Sunny, Moon, Monitor, Check, User, ArrowDown, Setting, SwitchButton, MagicStick
 } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
@@ -208,11 +208,9 @@ const {
   isSystem 
 } = useTheme()
 
-// 当前主题图标
+// 当前主题图标 - 使用统一的魔法棒图标
 const currentThemeIcon = computed(() => {
-  if (currentTheme.value === THEMES.LIGHT) return Sunny
-  if (currentTheme.value === THEMES.DARK) return Moon
-  return Monitor // system
+  return MagicStick // 统一使用魔法棒图标，代表主题切换
 })
 
 // 获取主题图标组件
@@ -228,10 +226,9 @@ const getThemeIcon = (iconName) => {
 // 处理用户下拉菜单命令
 const handleUserCommand = async (command) => {
   switch (command) {
-    case 'profile':
-      // TODO: 跳转到个人资料页面
-      console.log('跳转到个人资料')
-      break
+          case 'profile':
+        router.push('/profile')
+        break
     case 'settings':
       // TODO: 跳转到设置页面
       console.log('跳转到设置')
@@ -506,15 +503,90 @@ const handleUserCommand = async (command) => {
 // 主题切换样式
 .theme-dropdown {
   .theme-toggle {
-    color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease;
+    
+    // 覆盖Element Plus的所有状态样式
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+      box-shadow: none !important;
+    }
     
     &:hover {
-      color: white;
-      border-color: rgba(255, 255, 255, 0.4);
-      background: rgba(255, 255, 255, 0.1);
+      color: white !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      transform: rotate(15deg);
+    }
+    
+    &:focus {
+      background: transparent !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+      outline: none !important;
+    }
+    
+    &:active {
+      background: rgba(255, 255, 255, 0.15) !important;
+      transform: rotate(15deg) scale(0.95);
+    }
+    
+    // 魔法棒图标特殊效果
+    .el-icon {
+      transition: transform 0.3s ease;
+      color: inherit !important;
+      font-size: 16px;
+    }
+    
+    &:hover .el-icon {
+      animation: magic-sparkle 0.6s ease-in-out;
     }
   }
+  
+  // 确保下拉菜单触发器没有多余样式
+  &:deep(.el-dropdown-link) {
+    background: transparent !important;
+  }
+}
+
+// 强制覆盖Element Plus按钮的默认白色样式
+:deep(.theme-toggle.el-button) {
+  background-color: transparent !important;
+  background: transparent !important;
+  
+  &.el-button--default {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    &:focus {
+      background-color: transparent !important;
+      background: transparent !important;
+    }
+    
+    &:active {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+}
+
+// 魔法棒闪烁动画
+@keyframes magic-sparkle {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(5deg); }
+  50% { transform: scale(1.2) rotate(-5deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 :deep(.theme-option) {

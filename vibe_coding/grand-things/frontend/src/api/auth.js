@@ -164,6 +164,33 @@ export const isAuthenticated = () => {
   return !!(token && userInfo)
 }
 
+/**
+ * 修改密码
+ * @param {Object} passwordData - 密码数据
+ * @param {string} passwordData.current_password - 当前密码
+ * @param {string} passwordData.new_password - 新密码
+ */
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await authAPI.post('/auth/change-password', passwordData)
+    return response.data
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || '修改密码失败')
+  }
+}
+
+/**
+ * 获取用户统计信息
+ */
+export const getUserStatistics = async () => {
+  try {
+    const response = await authAPI.get('/auth/statistics')
+    return response.data
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || '获取统计信息失败')
+  }
+}
+
 export default {
   register,
   login,
@@ -173,5 +200,7 @@ export default {
   checkAuth,
   getToken,
   getUserInfo,
-  isAuthenticated
+  isAuthenticated,
+  changePassword,
+  getUserStatistics
 } 
