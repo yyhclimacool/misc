@@ -432,7 +432,7 @@ async function submitEvent() {
       ElMessage.success('事件修改成功！')
     } else {
       // 添加模式：创建事件
-      await eventAPI.createEvent(eventData)
+    await eventAPI.createEvent(eventData)
       ElMessage.success('事件添加成功！')
     }
     

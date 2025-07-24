@@ -73,3 +73,4 @@ def get_current_superuser(
 def get_user_service(db: Session = Depends(get_db)) -> UserService:
     """获取用户服务实例"""
     return UserService(db)
+ 

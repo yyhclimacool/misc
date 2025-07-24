@@ -129,3 +129,4 @@ async def check_auth(current_user: User = Depends(get_current_active_user)):
         "username": current_user.username,
         "email": current_user.email,
     }
+ 

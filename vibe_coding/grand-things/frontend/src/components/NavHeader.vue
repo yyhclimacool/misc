@@ -42,10 +42,10 @@
 
         <div v-else class="user-section">
           <!-- 添加事件按钮 -->
-          <el-button type="primary" size="default" @click="$router.push('/event/add')">
-            <el-icon><Plus /></el-icon>
-            添加事件
-          </el-button>
+        <el-button type="primary" size="default" @click="$router.push('/event/add')">
+          <el-icon><Plus /></el-icon>
+          添加事件
+        </el-button>
 
           <!-- 用户下拉菜单 -->
           <el-dropdown trigger="click" @command="handleUserCommand" class="user-dropdown">
@@ -340,10 +340,10 @@ const handleUserCommand = async (command) => {
   }
 }
 
-  .actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
     .auth-section {
       display: flex;

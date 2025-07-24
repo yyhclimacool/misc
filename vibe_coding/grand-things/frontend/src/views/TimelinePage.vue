@@ -84,7 +84,7 @@
             </div>
             
             <h3 class="event-title">{{ event.title }}</h3>
-          </div>
+            </div>
         </div>
       </div>
 
@@ -103,24 +103,24 @@
                 <el-icon>
                   <component :is="getCategoryIcon(event.category)" />
                 </el-icon>
-              </div>
-              
+        </div>
+        
               <!-- 事件卡片 -->
               <div 
                 class="horizontal-timeline-card"
                 :class="{ 'card-above': index % 2 === 0, 'card-below': index % 2 === 1 }"
                 @click="viewEventDetail(event.id)"
               >
-                <div class="card-header">
+            <div class="card-header">
                   <div class="event-date">{{ formatShortDate(event.event_date) }}</div>
                   <div class="event-category" :style="{ color: getCategoryColor(event.category) }">
                     {{ event.category }}
-                  </div>
-                </div>
-                
+            </div>
+            </div>
+            
                 <h3 class="event-title">{{ event.title }}</h3>
-              </div>
-              
+            </div>
+            
               <!-- 连接线 -->
               <div class="connection-line" :class="{ 'line-above': index % 2 === 0, 'line-below': index % 2 === 1 }"></div>
             </div>
@@ -763,15 +763,15 @@ function setupInfiniteScroll() {
           &.line-below {
             bottom: -16px;
             height: 60px;
-          }
-        }
+    }
+  }
 
         .horizontal-timeline-card {
           position: absolute;
           left: 50%;
           width: 220px;
           transform: translateX(-50%);
-          background: var(--bg-primary);
+      background: var(--bg-primary);
           border-radius: 12px;
           padding: 12px 16px;
           cursor: pointer;
@@ -790,27 +790,27 @@ function setupInfiniteScroll() {
           &:hover {
             transform: translateX(-50%) translateY(-3px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          }
+      }
 
           .card-header {
-            display: flex;
+        display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
 
-            .event-date {
+        .event-date {
               font-size: 11px;
-              color: var(--text-light);
-            }
+          color: var(--text-light);
+        }
 
-            .event-category {
+        .event-category {
               font-size: 10px;
-              font-weight: 600;
+          font-weight: 600;
               padding: 2px 6px;
               border-radius: 8px;
               background: rgba(255, 255, 255, 0.1);
-            }
-          }
+        }
+      }
 
           .event-title {
             font-size: 14px;

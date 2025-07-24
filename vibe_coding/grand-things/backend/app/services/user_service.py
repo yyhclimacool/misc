@@ -124,3 +124,4 @@ class UserService:
             "token_type": "bearer",
             "user": UserResponse.from_orm(user),
         }
+ 
